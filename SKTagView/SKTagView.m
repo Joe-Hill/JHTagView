@@ -144,7 +144,7 @@
             view.frame = CGRectMake(currentX, topPadding, size.width, size.height);
             currentX += size.width;
             currentX += itemSpacing;
-
+            
             previousView = view;
         }
     }
@@ -164,7 +164,8 @@
 
 - (void)addTag: (SKTag *)tag {
     NSParameterAssert(tag);
-    SKTagButton *btn = [SKTagButton buttonWithTag: tag];
+    SKTagButton *btn = [SKTagButton buttonWithType:UIButtonTypeCustom];
+    btn.tagInfo = tag;
     [btn addTarget: self action: @selector(onTag:) forControlEvents: UIControlEventTouchUpInside];
     [self addSubview: btn];
     [self.tags addObject: tag];
@@ -178,7 +179,8 @@
     if (index + 1 > self.tags.count) {
         [self addTag: tag];
     } else {
-        SKTagButton *btn = [SKTagButton buttonWithTag: tag];
+        SKTagButton *btn = [SKTagButton buttonWithType:UIButtonTypeCustom];
+        btn.tagInfo = tag;
         [btn addTarget: self action: @selector(onTag:) forControlEvents: UIControlEventTouchUpInside];
         [self insertSubview: btn atIndex: index];
         [self.tags insertObject: tag atIndex: index];
@@ -226,6 +228,19 @@
     
     self.didSetup = NO;
     [self invalidateIntrinsicContentSize];
+}
+
+- (void)reloadData {
+    if (self.subviews.count != self.tags.count) {
+        return;
+    }
+    
+    [self.subviews enumerateObjectsUsingBlock:^(SKTagButton * _Nonnull v,
+                                                NSUInteger i,
+                                                BOOL * _Nonnull stop) {
+        SKTag *tag = self.tags[i];
+        v.tagInfo = tag;
+    }];
 }
 
 @end

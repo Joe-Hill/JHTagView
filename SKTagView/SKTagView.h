@@ -23,5 +23,7 @@
 - (void)removeTagAtIndex: (NSUInteger)index;
 - (void)removeAllTags;
 
+- (void)reloadData;
+
 @end
 

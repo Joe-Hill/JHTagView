@@ -8,60 +8,58 @@
 
 @implementation SKTagButton
 
-+ (instancetype)buttonWithTag: (SKTag *)tag {
-	SKTagButton *btn = [super buttonWithType:UIButtonTypeCustom];
-	
-	if (tag.attributedText) {
-		[btn setAttributedTitle: tag.attributedText forState: UIControlStateNormal];
-	} else {
-		[btn setTitle: tag.text forState:UIControlStateNormal];
-		[btn setTitleColor: tag.textColor forState: UIControlStateNormal];
-		btn.titleLabel.font = tag.font ?: [UIFont systemFontOfSize: tag.fontSize];
-	}
-	
-	btn.backgroundColor = tag.bgColor;
-	btn.contentEdgeInsets = tag.padding;
-	btn.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
-	
-    if (tag.bgImg) {
-        [btn setBackgroundImage: tag.bgImg forState: UIControlStateNormal];
+- (void)setTagInfo:(SKTag *)tagInfo {
+    _tagInfo = tagInfo;
+    
+    if (tagInfo.attributedText) {
+        [self setAttributedTitle:tagInfo.attributedText forState: UIControlStateNormal];
+    } else {
+        [self setTitle: tagInfo.text forState:UIControlStateNormal];
+        [self setTitleColor:tagInfo.textColor forState: UIControlStateNormal];
+        self.titleLabel.font = tagInfo.font ?: [UIFont systemFontOfSize:tagInfo.fontSize];
     }
     
-    if (tag.borderColor) {
-        btn.layer.borderColor = tag.borderColor.CGColor;
+    self.backgroundColor = tagInfo.bgColor;
+    self.contentEdgeInsets = tagInfo.padding;
+    self.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
+    
+    if (tagInfo.bgImg) {
+        [self setBackgroundImage:tagInfo.bgImg forState: UIControlStateNormal];
     }
     
-    if (tag.borderWidth) {
-        btn.layer.borderWidth = tag.borderWidth;
+    if (tagInfo.borderColor) {
+        self.layer.borderColor = tagInfo.borderColor.CGColor;
     }
     
-    btn.userInteractionEnabled = tag.enable;
-    if (tag.enable) {
-        UIColor *highlightedBgColor = tag.highlightedBgColor ?: [self darkerColor:btn.backgroundColor];
-        [btn setBackgroundImage:[self imageWithColor:highlightedBgColor] forState:UIControlStateHighlighted];
+    if (tagInfo.borderWidth) {
+        self.layer.borderWidth = tagInfo.borderWidth;
     }
     
-    btn.layer.cornerRadius = tag.cornerRadius;
-    btn.layer.masksToBounds = YES;
+    self.userInteractionEnabled = tagInfo.enable;
+    if (tagInfo.enable) {
+        UIColor *highlightedBgColor = tagInfo.highlightedBgColor ?: [self darkerColor:self.backgroundColor];
+        [self setBackgroundImage:[self imageWithColor:highlightedBgColor] forState:UIControlStateHighlighted];
+    }
     
-    return btn;
+    self.layer.cornerRadius = tagInfo.cornerRadius;
+    self.layer.masksToBounds = YES;
 }
 
-+ (UIImage *)imageWithColor:(UIColor *)color {
+- (UIImage *)imageWithColor:(UIColor *)color {
     CGRect rect = CGRectMake(0.0f, 0.0f, 1.0f, 1.0f);
     UIGraphicsBeginImageContext(rect.size);
     CGContextRef context = UIGraphicsGetCurrentContext();
-
+    
     CGContextSetFillColorWithColor(context, [color CGColor]);
     CGContextFillRect(context, rect);
-
+    
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
-
+    
     return image;
 }
 
-+ (UIColor *)darkerColor:(UIColor *)color {
+- (UIColor *)darkerColor:(UIColor *)color {
     CGFloat h, s, b, a;
     if ([color getHue:&h saturation:&s brightness:&b alpha:&a])
         return [UIColor colorWithHue:h
